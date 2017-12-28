@@ -73,23 +73,6 @@ public class MainCanvas extends java.awt.Canvas {
                 }
             }
             
-            // TODO: Reimplement connection rendering
-            /*
-            ArrayList<AntennaSignal> visibleNodes = node.node.antenna.scanSignals();
-            for (int i = 0; i < visibleNodes.size(); i++) {
-                SimulatedNode otherNode = Simulator.getSimulatedNodeByUUID(visibleNodes.get(i).transmitterUUID);
-                int x2 = (int) convertXCoordinate(otherNode.x, false);
-                int y2 = (int) convertYCoordinate(otherNode.y, false);
-                
-                // TODO: Alpha changes with signal strength?
-                int alpha = Math.min(255, (int)(visibleNodes.get(i).strength / 100 * 255)) 255;       
-                Color color = new Color(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), alpha);
-                
-                g.setColor(color);
-                g.drawLine(x, y, x2, y2);
-            }
-            */
-            
             int x = (int) (convertXCoordinate(node.x, false));
             int y = (int) (convertYCoordinate(node.y, false));
             int radius = renderedNodeRadius + 3;
