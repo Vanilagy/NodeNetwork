@@ -90,13 +90,15 @@ public class MainCanvas extends java.awt.Canvas {
         int y = Main.gui.mouseY;
         
         if (cursorMode == "addNode") {
-            Graphics g = getGraphics();
+            Image buffer = createImage(width, height);
+            Graphics g = buffer.getGraphics();
             paint(g);
             
             int radius = renderedNodeRadius + 1;
             
             g.setColor(Color.WHITE);
             g.drawOval(x - radius, y - radius, radius * 2, radius * 2);
+            this.getGraphics().drawImage(buffer, 0, 0, this);
         }
     }
     

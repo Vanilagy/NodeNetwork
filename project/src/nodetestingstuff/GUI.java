@@ -64,11 +64,6 @@ public class GUI extends javax.swing.JFrame {
                 addNodeButtonMouseClicked(evt);
             }
         });
-        addNodeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addNodeButtonActionPerformed(evt);
-            }
-        });
 
         deleteNodeButton.setText("Delete selected node");
         deleteNodeButton.setEnabled(false);
@@ -189,10 +184,6 @@ public class GUI extends javax.swing.JFrame {
         mouseDown = true;
         click(evt.getX(), evt.getY());
     }//GEN-LAST:event_mainCanvasMousePressed
-
-    private void addNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNodeButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addNodeButtonActionPerformed
 
     private void addNodeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addNodeButtonMouseClicked
         cursorMode = "addNode";
