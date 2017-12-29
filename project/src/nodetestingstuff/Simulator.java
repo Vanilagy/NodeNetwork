@@ -14,7 +14,7 @@ public class Simulator {
     private static HashMap AntennaUUIDMap = new HashMap();
     
     // Strength threshold at which signals will be "detectable"
-    private static final double REQUIRED_SIGNAL_STRENGTH = 0;
+    public static final double REQUIRED_SIGNAL_STRENGTH = 0.04;
     
     // Adds a node and its antennas into the maps
     public static void register(SimulatedNode node) {
@@ -138,6 +138,32 @@ public class Simulator {
         } else {
             if (antenna.connectedAccessPointUUID != null) {
                 Simulator.getAntennaByUUID(antenna.connectedAccessPointUUID).disconnectAntenna(antenna.UUID);
+            }
+        }
+    }
+    // Checks if connected antennas are still in range - if not, disconnect them
+    public static void checkAntennaConnections(SimulatedNode node) {
+        for (int i = 0; i < node.node.antennas.size(); i++) {
+            Antenna antenna = node.node.antennas.get(i);
+            
+            if (!antenna.isAccessPoint()) {
+                if (antenna.connectedAccessPointUUID != null) {
+                    Antenna accessPoint = Simulator.getAntennaByUUID(antenna.connectedAccessPointUUID);
+                    
+                    if (!isVisibleAntenna(antenna, accessPoint)) {
+                        antenna.disconnectAntenna(antenna.connectedAccessPointUUID);
+                        accessPoint.disconnectAntenna(antenna.UUID);
+                    }
+                }
+            } else {
+                for (int j = 0; j < antenna.connectedClientUUIDs.size(); j++) {
+                    Antenna client = Simulator.getAntennaByUUID(antenna.connectedClientUUIDs.get(j));
+                    
+                    if (!isVisibleAntenna(antenna, client)) {
+                        antenna.disconnectAntenna(antenna.connectedClientUUIDs.get(j));
+                        client.disconnectAntenna(antenna.UUID);
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 package nodetestingstuff;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import static javax.swing.ScrollPaneConstants.*;
 
 public class GUI extends javax.swing.JFrame {
@@ -7,6 +9,17 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         
         jScrollPane1.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                mainCanvas.paint(mainCanvas.getGraphics());
+                if (selectedNode != null) {
+                    selectNode(selectedNode);
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 1000 / 10);
     }
 
     @SuppressWarnings("unchecked")
@@ -198,6 +211,7 @@ public class GUI extends javax.swing.JFrame {
             selectedNode.x = Math.max(-mainCanvas.coordinateWidth / 2, Math.min(mainCanvas.coordinateWidth / 2, mainCanvas.convertXCoordinate(mouseX + selectedNodeOffsetX, true)));
             selectedNode.y = Math.max(-mainCanvas.coordinateWidth / 2, Math.min(mainCanvas.coordinateWidth / 2, mainCanvas.convertYCoordinate(mouseY + selectedNodeOffsetY, true)));
             
+            Simulator.checkAntennaConnections(selectedNode);
             selectNode(selectedNode);
         }
         
