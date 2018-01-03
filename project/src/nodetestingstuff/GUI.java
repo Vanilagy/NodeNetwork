@@ -165,7 +165,6 @@ public class GUI extends javax.swing.JFrame {
             }
         } else if (cursorMode == "addNode") {
             Simulator.addNode(new SimulatedNode(mainCanvas.convertXCoordinate(mouseX, true), mainCanvas.convertYCoordinate(mouseY, true)));
-            mainCanvas.repaint();
             cursorMode = "select";
             cursorModeDisplay.setText("Mode: Select");
         }         
@@ -173,7 +172,6 @@ public class GUI extends javax.swing.JFrame {
     
     private void selectNode(SimulatedNode node) {
         selectedNode = node;
-        mainCanvas.repaint();
         
         selectedNodeOffsetX = (int) mainCanvas.convertXCoordinate(node.x, false) - mouseX;
         selectedNodeOffsetY = (int) mainCanvas.convertYCoordinate(node.y, false) - mouseY;
@@ -187,7 +185,6 @@ public class GUI extends javax.swing.JFrame {
     
     private void deselectNode() {
         selectedNode = null;
-        mainCanvas.repaint();
         
         selectedNodeInfoLabel.setEnabled(false);
         selectedNodeTextArea.setEnabled(false);

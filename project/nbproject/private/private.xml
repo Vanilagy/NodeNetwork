@@ -3,9 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/David/Desktop/Code/NodeNetwork/project/src/nodetestingstuff/GUI.java</file>
-            <file>file:/C:/Users/David/Desktop/Code/NodeNetwork/project/src/nodetestingstuff/MainCanvas.java</file>
-            <file>file:/C:/Users/David/Desktop/Code/NodeNetwork/project/src/nodetestingstuff/Main.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/MainCanvas.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/Antenna.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/Node.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/AntennaSignal.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/Utils.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/Main.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/SimulatedNode.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/GUI.java</file>
+            <file>file:/C:/Users/Henri/Documents/NodeNetwork/NodeNetworkN/project/src/nodetestingstuff/Simulator.java</file>
         </group>
     </open-files>
 </project-private>
