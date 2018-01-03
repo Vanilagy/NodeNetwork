@@ -13,9 +13,12 @@ public class GUI extends javax.swing.JFrame {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
-                mainCanvas.paint(mainCanvas.getGraphics());
+                mainCanvas.repaint();
                 if (selectedNode != null) {
                     selectNode(selectedNode);
+                }
+                else if(cursorMode == "addNode") {
+                    mainCanvas.drawMouse();
                 }
             }
         };
@@ -162,7 +165,7 @@ public class GUI extends javax.swing.JFrame {
             }
         } else if (cursorMode == "addNode") {
             Simulator.addNode(new SimulatedNode(mainCanvas.convertXCoordinate(mouseX, true), mainCanvas.convertYCoordinate(mouseY, true)));
-            mainCanvas.paint(mainCanvas.getGraphics());
+            mainCanvas.repaint();
             cursorMode = "select";
             cursorModeDisplay.setText("Mode: Select");
         }         
@@ -170,7 +173,7 @@ public class GUI extends javax.swing.JFrame {
     
     private void selectNode(SimulatedNode node) {
         selectedNode = node;
-        mainCanvas.paint(mainCanvas.getGraphics());
+        mainCanvas.repaint();
         
         selectedNodeOffsetX = (int) mainCanvas.convertXCoordinate(node.x, false) - mouseX;
         selectedNodeOffsetY = (int) mainCanvas.convertYCoordinate(node.y, false) - mouseY;
@@ -184,7 +187,7 @@ public class GUI extends javax.swing.JFrame {
     
     private void deselectNode() {
         selectedNode = null;
-        mainCanvas.paint(mainCanvas.getGraphics());
+        mainCanvas.repaint();
         
         selectedNodeInfoLabel.setEnabled(false);
         selectedNodeTextArea.setEnabled(false);

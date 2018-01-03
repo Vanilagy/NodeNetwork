@@ -58,7 +58,16 @@ public class Node extends Thread {
                 }
             });
             
-            antenna.requestConnection(signals.get(0).transmitterUUID);
+            if(signals.size() > 1) {
+                AntennaSignal transmitterAntenna = signals.get(0);
+                for(int i = 1; i<signals.size(); i++) {
+                    if(signals.get(i).strength > transmitterAntenna.strength) {
+                        transmitterAntenna = signals.get(i);
+                    }
+                }
+                antenna.requestConnection(transmitterAntenna.transmitterUUID);
+            }
+            else antenna.requestConnection(signals.get(0).transmitterUUID);
         }
     }
     
