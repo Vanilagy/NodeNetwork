@@ -13,7 +13,7 @@ public class GUI extends javax.swing.JFrame {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
-                mainCanvas.repaint();
+                mainCanvas.paint(mainCanvas.getGraphics());
                 if (selectedNode != null) {
                     selectNode(selectedNode);
                 }
@@ -213,6 +213,7 @@ public class GUI extends javax.swing.JFrame {
             
             Simulator.checkAntennaConnections(selectedNode);
             selectNode(selectedNode);
+            mainCanvas.paint(mainCanvas.getGraphics());
         }
         
         mainCanvas.drawMouse();
