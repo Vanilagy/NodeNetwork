@@ -157,7 +157,10 @@ public class GUI extends javax.swing.JFrame {
                 double distance = Math.hypot(x - nodeX, y - nodeY);
 
                 if (distance <= mainCanvas.renderedNodeRadius + 1) {
+                    selectedNodeOffsetX = (int) mainCanvas.convertXCoordinate(node.x, false) - mouseX;
+                    selectedNodeOffsetY = (int) mainCanvas.convertYCoordinate(node.y, false) - mouseY;
                     selectNode(node);
+                    mainCanvas.paint(mainCanvas.getGraphics());
                     break;
                 }
 
@@ -173,9 +176,6 @@ public class GUI extends javax.swing.JFrame {
     private void selectNode(SimulatedNode node) {
         selectedNode = node;
         
-        selectedNodeOffsetX = (int) mainCanvas.convertXCoordinate(node.x, false) - mouseX;
-        selectedNodeOffsetY = (int) mainCanvas.convertYCoordinate(node.y, false) - mouseY;
-        
         selectedNodeInfoLabel.setEnabled(true);
         selectedNodeTextArea.setEnabled(true);
         deleteNodeButton.setEnabled(true);
@@ -185,6 +185,7 @@ public class GUI extends javax.swing.JFrame {
     
     private void deselectNode() {
         selectedNode = null;
+        mainCanvas.paint(mainCanvas.getGraphics());
         
         selectedNodeInfoLabel.setEnabled(false);
         selectedNodeTextArea.setEnabled(false);

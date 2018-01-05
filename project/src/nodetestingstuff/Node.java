@@ -17,6 +17,7 @@ public class Node extends Thread {
     @Override // Main thread of the node
     public void run() {
         /*
+        TEMPORARY:
         If no access points are found, make yourself one. Otherwise connect to the one that's found. An access point
         shuts off once it's connected to six clients. The process will repeat with the node placed after that.
         */
