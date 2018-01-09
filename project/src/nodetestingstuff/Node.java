@@ -6,6 +6,7 @@ public class Node extends Thread {
     // Stores (hopefully) unique identified for this node (randomly generated)
     public String UUID;
     public ArrayList<Antenna> antennas = new ArrayList<>();
+    protected ArrayList<String> antennaUUIDs = new ArrayList<>();
     
     public Node() {
         this.UUID = Utils.getRandomHexString(16);
@@ -13,6 +14,10 @@ public class Node extends Thread {
         // Adds an antenna
         this.antennas.add(new Antenna(this, 100, 0));
         this.antennas.add(new Antenna(this, 100, 0));
+        
+        for(int i = 0; i<antennas.size(); i++) {
+            antennaUUIDs.add(antennas.get(i).UUID);
+        }
     }
     
     @Override // Main thread of the node
@@ -28,14 +33,20 @@ public class Node extends Thread {
             antenna.setPowerState(1);
 
             ArrayList<AntennaSignal> signals = antennas.get(g).scanSignals();
+            ArrayList<AntennaSignal> singalsToRemove = new ArrayList<>();
             for(int k = 0; k<signals.size(); k++) {
                 AntennaSignal signal = signals.get(k);
                 for(int l = 0; l<antennas.size(); l++) {
-                    if(signal.transmitterUUID.equals(antennas.get(l).UUID)) signals.remove(signal);
-                    if(signal.transmitterUUID.equals(antennas.get(l).connectedAccessPointUUID)) signals.remove(signal);
+                    if(signal.transmitterUUID.equals(antennas.get(l).UUID)) singalsToRemove.add(signal);
+                    else if(signal.transmitterUUID.equals(antennas.get(l).connectedAccessPointUUID)) singalsToRemove.add(signal);
+                    else if(signal.transmitterNodeUUID.equals(antennas.get(l).connectedAccessPointNodeUUID)) singalsToRemove.add(signal);
                 }
             }
-            if (signals.size() == 0) {
+            while(!singalsToRemove.isEmpty()) {
+                signals.remove(singalsToRemove.get(0));
+                singalsToRemove.remove(0);
+            }
+            if (signals.isEmpty()) {
                 System.out.println("Server node opened up!");
 
                 antenna.setMode(1);
@@ -45,7 +56,7 @@ public class Node extends Thread {
                     } else if (evt.type.equals("onClientConnect")) {
                         System.out.println("Connected to a new client innit!");
 
-                        if (antenna.connectedClientUUIDs.size() > 5) antenna.setPowerState(0);
+                        if (antenna.connectedClientUUIDs.size() > 10) antenna.setPowerState(0);
                         if (antenna.connectedClientUUIDs.size() > 4) {
                             for (int i = 0; i < antenna.connectedClientUUIDs.size(); i++) {
                                 antenna.sendToClient(antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");

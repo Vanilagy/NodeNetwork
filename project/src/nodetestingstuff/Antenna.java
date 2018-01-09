@@ -40,6 +40,7 @@ public class Antenna {
     private boolean isOn = false;
     
     public String connectedAccessPointUUID;
+    protected String connectedAccessPointNodeUUID;
     public ArrayList<String> connectedClientUUIDs = new ArrayList<>();
     private String connectionRequestUUID;
     
@@ -94,6 +95,7 @@ public class Antenna {
             // Reset variables
             this.isOn = false;
             this.connectedAccessPointUUID = null;
+            this.connectedAccessPointNodeUUID = null;
             this.connectedClientUUIDs = new ArrayList<>();
             this.connectionRequestUUID = null;
         }
@@ -196,6 +198,7 @@ public class Antenna {
             if (!this.isAccessPoint()) {
                 if (this.connectedAccessPointUUID.equals(UUID)) {
                     this.connectedAccessPointUUID = null;
+                    this.connectedAccessPointNodeUUID = null;
 
                     fireAntennaEvent(new AntennaEvent(this, "onDisconnect", UUID, null));
                 }
@@ -224,18 +227,19 @@ public class Antenna {
             fireAntennaEvent(new AntennaEvent(this, "onConnectionRequest", antennaUUID, null));
         }
     }
-    public void receiveConnectionAccept(String antennaUUID) {  
+    public void receiveConnectionAccept(String antennaUUID, String antennaNodeUUID) {  
         if (this.isOn()) {
             if (antennaUUID.equals(connectionRequestUUID)) {
-                Simulator.connectToAccessPoint(this, antennaUUID);
+                Simulator.connectToAccessPoint(this, antennaUUID, antennaNodeUUID);
                 connectionRequestUUID = null;
             }
         } 
     }
-    public void connectToAccessPoint(String accessPointUUID) {
+    public void connectToAccessPoint(String accessPointUUID, String accessPointNodeUUID) {
         if (this.isOn()) {
             if (!this.isAccessPoint()) {
                 connectedAccessPointUUID = accessPointUUID;
+                connectedAccessPointNodeUUID = accessPointNodeUUID;
             } else {
                 throw new java.lang.RuntimeException("Tried to connect to access point as access point");
             }

@@ -50,7 +50,7 @@ public class Simulator {
                     double signalStrength = Simulator.getSignalStrength(otherAntenna, antenna);
 
                     if (signalStrength >= Simulator.REQUIRED_SIGNAL_STRENGTH) {
-                        detectableSignals.add(new AntennaSignal(signalStrength, otherAntenna.UUID));
+                        detectableSignals.add(new AntennaSignal(signalStrength, otherAntenna.UUID, otherAntenna.connectedNode.UUID));
                     }
                 }
             }           
@@ -103,15 +103,15 @@ public class Simulator {
         Antenna receiver = Simulator.getAntennaByUUID(receiverUUID);
         
         if (receiver != null && Simulator.isVisibleAntenna(transmitter, receiver)) {
-            receiver.receiveConnectionAccept(transmitter.UUID);
+            receiver.receiveConnectionAccept(transmitter.UUID, transmitter.connectedNode.UUID);
         }
     }
     // Connects client and access point
-    public static void connectToAccessPoint(Antenna client, String accessPointUUID) {
+    public static void connectToAccessPoint(Antenna client, String accessPointUUID, String accessPointNodeUUID) {
         Antenna accessPoint = Simulator.getAntennaByUUID(accessPointUUID);
         
         if (accessPoint.isAccessPoint() && !client.isAccessPoint()) {
-            client.connectToAccessPoint(accessPointUUID);
+            client.connectToAccessPoint(accessPointUUID, accessPointNodeUUID);
             accessPoint.connectToClient(client.UUID);
             
             if (client.isOn()) client.fireAntennaEvent(new AntennaEvent(client, "onAccessPointConnect", null, accessPointUUID));

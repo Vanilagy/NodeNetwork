@@ -17,7 +17,7 @@ public class GUI extends javax.swing.JFrame {
                 if (selectedNode != null) {
                     selectNode(selectedNode);
                 }
-                else if(cursorMode == "addNode") {
+                if(cursorMode == "addNode") {
                     mainCanvas.drawMouse();
                 }
             }
@@ -128,7 +128,7 @@ public class GUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(selectedNodeInfoLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteNodeButton)
                         .addGap(0, 0, Short.MAX_VALUE))
