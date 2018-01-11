@@ -38,6 +38,7 @@ public class Antenna {
     public double strength;
     private boolean isAccessPoint = false;
     private boolean isOn = false;
+    private boolean isWaiting;
     
     public String connectedAccessPointUUID;
     protected String connectedAccessPointNodeUUID;
@@ -64,11 +65,12 @@ public class Antenna {
         }
     }
     
-    public Antenna(Node connectedNode, double strength, int mode) {
+    public Antenna(Node connectedNode, double strength, int mode, int waitingStatus) {
         this.UUID = Utils.getRandomHexString(16);
         this.connectedNode = connectedNode;
         this.strength = strength;
         this.setMode(mode);
+        this.setWaitingState(waitingStatus);
     }
     
     public boolean isAccessPoint() {
@@ -100,7 +102,17 @@ public class Antenna {
             this.connectionRequestUUID = null;
         }
     }
-    
+    public boolean isWaiting() {
+        return this.isWaiting;        
+    }   
+    public void setWaitingState(int state) {
+        if(state == 0) {
+            this.isWaiting = false;
+        }
+        else if(state == 1) {
+            this.isWaiting = true;
+        }
+    }
     // Returns a list of all the other nodes' antennas' signals which this antenna can detect
     public ArrayList<AntennaSignal> scanSignals() {
         if (this.isOn()) {

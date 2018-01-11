@@ -12,8 +12,8 @@ public class Node extends Thread {
         this.UUID = Utils.getRandomHexString(16);
         
         // Adds an antenna
-        this.antennas.add(new Antenna(this, 100, 0));
-        this.antennas.add(new Antenna(this, 100, 0));
+        this.antennas.add(new Antenna(this, 100, 0, 1));
+        this.antennas.add(new Antenna(this, 100, 0, 1));
         
         for(int i = 0; i<antennas.size(); i++) {
             antennaUUIDs.add(antennas.get(i).UUID);
@@ -28,67 +28,98 @@ public class Node extends Thread {
         shuts off once it's connected to six clients. The process will repeat with the node placed after that.
         */
         
-        for(int g = 0; g<antennas.size(); g++) {
-            Antenna antenna = antennas.get(g);
-            antenna.setPowerState(1);
+        while(true) {
 
-            ArrayList<AntennaSignal> signals = antennas.get(g).scanSignals();
-            ArrayList<AntennaSignal> singalsToRemove = new ArrayList<>();
-            for(int k = 0; k<signals.size(); k++) {
-                AntennaSignal signal = signals.get(k);
-                for(int l = 0; l<antennas.size(); l++) {
-                    if(signal.transmitterUUID.equals(antennas.get(l).UUID)) singalsToRemove.add(signal);
-                    else if(signal.transmitterUUID.equals(antennas.get(l).connectedAccessPointUUID)) singalsToRemove.add(signal);
-                    else if(signal.transmitterNodeUUID.equals(antennas.get(l).connectedAccessPointNodeUUID)) singalsToRemove.add(signal);
-                }
-            }
-            while(!singalsToRemove.isEmpty()) {
-                signals.remove(singalsToRemove.get(0));
-                singalsToRemove.remove(0);
-            }
-            if (signals.isEmpty()) {
-                System.out.println("Server node opened up!");
+            for(int g = 0; g<antennas.size(); g++) {
+                if(antennas.get(g).isWaiting()) {
+                    //Removes all signals of antennas, which another of the own antennas is ...
+                    Antenna antenna = antennas.get(g);
+                    antenna.setPowerState(1);
 
-                antenna.setMode(1);
-                antenna.addAntennaEventListener((AntennaEvent evt) -> {
-                    if (evt.type.equals("onConnectionRequest")) {
-                        antenna.acceptConnectionRequest(evt.transmitterUUID);
-                    } else if (evt.type.equals("onClientConnect")) {
-                        System.out.println("Connected to a new client innit!");
+                    ArrayList<AntennaSignal> signals = antennas.get(g).scanSignals();
+                    ArrayList<AntennaSignal> singalsToRemove = new ArrayList<>();
+                    for(int k = 0; k<signals.size(); k++) {
+                        AntennaSignal signal = signals.get(k);
+                        for(int l = 0; l<antennas.size(); l++) {
+                            if(signal.transmitterUUID.equals(antennas.get(l).UUID)) singalsToRemove.add(signal); //one of the own Nodes
+                            else if(signal.transmitterUUID.equals(antennas.get(l).connectedAccessPointUUID)) singalsToRemove.add(signal); //already connected to
+                            else if(signal.transmitterNodeUUID.equals(antennas.get(l).connectedAccessPointNodeUUID)) singalsToRemove.add(signal); //already connected to one of the own antennas
+                        }
+                    }
+                    while(!singalsToRemove.isEmpty()) {
+                        signals.remove(singalsToRemove.get(0));
+                        singalsToRemove.remove(0);
+                    }
 
-                        if (antenna.connectedClientUUIDs.size() > 10) antenna.setPowerState(0);
-                        if (antenna.connectedClientUUIDs.size() > 4) {
-                            for (int i = 0; i < antenna.connectedClientUUIDs.size(); i++) {
-                                antenna.sendToClient(antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");
+                    //Protocol
+                    if (signals.isEmpty() && !hasAccessPoint()) {
+                        System.out.println("Server node opened up!");
+
+                        antenna.setMode(1);
+                        antenna.addAntennaEventListener((AntennaEvent evt) -> {
+                            switch (evt.type) {
+                                case "onConnectionRequest":
+                                    antenna.acceptConnectionRequest(evt.transmitterUUID);
+                                    break;
+                                case "onClientConnect":
+                                    System.out.println("Connected to a new client innit!");
+                                    if (antenna.connectedClientUUIDs.size() > 10) antenna.setPowerState(0);
+                                    if (antenna.connectedClientUUIDs.size() > 4) {
+                                        for (int i = 0; i < antenna.connectedClientUUIDs.size(); i++) {
+                                            antenna.sendToClient(antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");
+                                        }
+                                    }   break;
+                            // TODO: Add message handling
+                                case "onMessage":
+                                    break;
+                                case "onDisconnect":
+                                    System.out.println("Client disconnected! " + antenna.connectedClientUUIDs.size());
+                                    break;
+                                default:
+                                    break;
                             }
-                        }
-                    } else if (evt.type.equals("onMessage")) {
-                        // TODO: Add message handling
-                    } else if (evt.type.equals("onDisconnect")) {
-                        System.out.println("Client disconnected! " + antenna.connectedClientUUIDs.size());
+                        });
+                        antenna.setWaitingState(0);
+                    } else if(signals.isEmpty()) {
+                        antenna.setWaitingState(1);
                     }
-                });
-            } else {
-                antenna.addAntennaEventListener((AntennaEvent evt) -> {
-                    if (evt.type.equals("onMessage")) {
-                        System.out.println(evt.data);
-                    } else if (evt.type.equals("onDisconnect")) {
-                        System.out.println("Server disconnected!");
-                    } else if (evt.type.equals("onAccessPointConnect")) {
-                        // antenna.setPowerState(0);
-                    }
-                });
+                    else {
+                        antenna.addAntennaEventListener((AntennaEvent evt) -> {
+                            switch (evt.type) {
+                                case "onMessage":
+                                    System.out.println(evt.data);
+                                    break;
+                                case "onDisconnect":
+                                    System.out.println("Server disconnected!");
+                                    break;
+                            // antenna.setPowerState(0);
+                                case "onAccessPointConnect":
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
 
-                if(signals.size() > 1) {
-                    AntennaSignal transmitterAntenna = signals.get(0);
-                    for(int i = 1; i<signals.size(); i++) {
-                        if(signals.get(i).strength > transmitterAntenna.strength) {
-                            transmitterAntenna = signals.get(i);
+                        if(signals.size() > 1) {
+                            AntennaSignal transmitterAntenna = signals.get(0);
+                            for(int i = 1; i<signals.size(); i++) {
+                                if(signals.get(i).strength > transmitterAntenna.strength) {
+                                    transmitterAntenna = signals.get(i);
+                                }
+                            }
+                            antenna.requestConnection(transmitterAntenna.transmitterUUID);
                         }
+                        else antenna.requestConnection(signals.get(0).transmitterUUID);
+                        antenna.setWaitingState(0);
                     }
-                    antenna.requestConnection(transmitterAntenna.transmitterUUID);
                 }
-                else antenna.requestConnection(signals.get(0).transmitterUUID);
+            }
+            try {
+                synchronized(this) {
+                    this.wait(200);
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.toString());
             }
         }
     }
@@ -96,5 +127,11 @@ public class Node extends Thread {
     @Override
     public String toString() {
         return "Node " + this.UUID + "\nAntenna #0 strength: " + this.antennas.get(0).strength + "\nAntenna #1 strength: " + this.antennas.get(1).strength;
+    }
+    public boolean hasAccessPoint() {
+        for(int i = 0; i<antennas.size(); i++) {
+            if(antennas.get(i).isAccessPoint()) return true;
+        }
+        return false;
     }
 }
