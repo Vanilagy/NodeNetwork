@@ -69,13 +69,13 @@ public class Node extends Thread {
                                             antenna.sendToClient(antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");
                                         }
                                     }   break;
-                            // TODO: Add message handling
                                 case "onMessage":
+                                    // TODO: Add message handling
                                     break;
                                 case "onDisconnect":
                                     System.out.println("Client disconnected! " + antenna.connectedClientUUIDs.size());
-                                    break;
-                                default:
+                                    antenna.setWaitingState(1);
+                                    antenna.setMode(0);
                                     break;
                             }
                         });
@@ -91,11 +91,9 @@ public class Node extends Thread {
                                     break;
                                 case "onDisconnect":
                                     System.out.println("Server disconnected!");
+                                    antenna.setWaitingState(1);
                                     break;
-                            // antenna.setPowerState(0);
                                 case "onAccessPointConnect":
-                                    break;
-                                default:
                                     break;
                             }
                         });
