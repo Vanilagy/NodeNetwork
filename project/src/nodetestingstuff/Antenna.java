@@ -13,6 +13,7 @@ class AntennaEvent extends EventObject {
     public String type;
     public String transmitterUUID;
     public String data;
+    protected String sourceUUID;
     
     /*
     Possible types:
@@ -27,6 +28,14 @@ class AntennaEvent extends EventObject {
     public AntennaEvent(Object source, String type, String transmitterUUID, String data) {
         super(source);
         this.type = type;
+        this.transmitterUUID = transmitterUUID;
+        this.data = data;
+    }
+    
+    public AntennaEvent(Object source, String type, String sourceUUID, String transmitterUUID, String data) {
+        super(source);
+        this.type = type;
+        this.sourceUUID = sourceUUID;
         this.transmitterUUID = transmitterUUID;
         this.data = data;
     }
@@ -169,11 +178,11 @@ public class Antenna {
         }
     }
     // These two methods handle sending messages
-    public void sendToAccessPoint(String message) {
+    public void sendToAccessPoint(String sourceUUID, String message) {
         if (this.isOn()) {
             if (!this.isAccessPoint()) {
                 if (this.connectedAccessPointUUID != null) {
-                    Simulator.transmitMessage(this, connectedAccessPointUUID, message);
+                    Simulator.transmitMessage(this, sourceUUID, connectedAccessPointUUID, message);
                 } else {
                     throw new java.lang.RuntimeException("Tried to send message as client; not connected to an access point");
                 }
@@ -184,12 +193,12 @@ public class Antenna {
             throw new java.lang.RuntimeException("Antenna not powered on");
         }  
     }
-    public void sendToClient(String clientUUID, String message) {
+    public void sendToClient(String sourceUUID, String clientUUID, String message) {
         if (this.isOn()) {
             if (this.isAccessPoint()) {
                 for (int i = 0; i < this.connectedClientUUIDs.size(); i++) {
                     if (this.connectedClientUUIDs.get(i).equals(clientUUID)) {
-                        Simulator.transmitMessage(this, clientUUID, message);
+                        Simulator.transmitMessage(this, sourceUUID, clientUUID, message);
                         break;
                     }
 
@@ -266,9 +275,9 @@ public class Antenna {
             }
         }    
     }
-    public void receiveMessage(String senderUUID, String message) {
+    public void receiveMessage(String sourceUUID, String senderUUID, String message) {
         if (this.isOn()) {
-            fireAntennaEvent(new AntennaEvent(this, "onMessage", senderUUID, message));
+            fireAntennaEvent(new AntennaEvent(this, "onMessage", sourceUUID, senderUUID, message));
         }
     }
     /*

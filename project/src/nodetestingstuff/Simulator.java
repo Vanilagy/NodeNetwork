@@ -122,11 +122,11 @@ public class Simulator {
         }
     }
     // Used to send a string from one antenna to another, if they are connected
-    public static void transmitMessage(Antenna transmitter, String receiverUUID, String message) {
+    public static void transmitMessage(Antenna transmitter, String sourceUUID, String receiverUUID, String message) {
         Antenna receiver = Simulator.getAntennaByUUID(receiverUUID);
         
         if (receiver != null && Simulator.isVisibleAntenna(transmitter, receiver) && transmitter.isConnectedTo(receiverUUID)) {
-            receiver.receiveMessage(transmitter.UUID, message);
+            receiver.receiveMessage(sourceUUID, transmitter.UUID, message);
         }
     }
     // Causes disconnection of an antenna

@@ -66,11 +66,43 @@ public class Node extends Thread {
                                     if (antenna.connectedClientUUIDs.size() > 10) antenna.setPowerState(0);
                                     if (antenna.connectedClientUUIDs.size() > 4) {
                                         for (int i = 0; i < antenna.connectedClientUUIDs.size(); i++) {
-                                            antenna.sendToClient(antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");
+                                            antenna.sendToClient(evt.sourceUUID, antenna.connectedClientUUIDs.get(i), "BOYS I AM FAMOUS!");
                                         }
                                     }   break;
                                 case "onMessage":
                                     // TODO: Add message handling
+                                    for(int i = 0; i<this.antennaUUIDs.size(); i++) {
+                                        if(evt.transmitterUUID.equals(this.antennaUUIDs.get(i)) ) {
+                                            System.out.println(evt.data);
+                                            break;
+                                        }
+                                        else if(this.antennaUUIDs.get(i).equals(evt.sourceUUID)) {
+                                            break;
+                                        }
+                                    }
+                                    for(int i = 0; i<this.antennas.size(); i++) {
+                                        if(antennas.get(i).isAccessPoint()) {
+                                            for(int k = 0; k<antennas.get(i).connectedClientUUIDs.size(); i++) {
+                                                if(antennas.get(i).connectedClientUUIDs.get(i).equals(evt.transmitterUUID)) {
+                                                    antennas.get(i).sendToClient(evt.sourceUUID, antennas.get(i).connectedClientUUIDs.get(i), evt.data);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            if(antennas.get(i).connectedAccessPointUUID.equals(evt.transmitterUUID)) {
+                                                antennas.get(i).sendToAccessPoint(evt.sourceUUID, evt.data);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    for(int i = 0; i<antennas.size(); i++) {
+                                        if(antennas.get(i).isAccessPoint()) {
+                                            for(int k = 0; k<antennas.get(i).connectedClientUUIDs.size(); i++) {
+                                                antennas.get(i).sendToClient(evt.sourceUUID, antennas.get(i).connectedClientUUIDs.get(i), evt.data);
+                                            }
+                                        }
+                                    }
                                     break;
                                 case "onDisconnect":
                                     System.out.println("Client disconnected! " + antenna.connectedClientUUIDs.size());
